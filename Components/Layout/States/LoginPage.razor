@@ -1,0 +1,17 @@
+@page "/login"
+
+<div class="login">
+    <h1 style="text-align: left">Login</h1>
+    <form style="display: flex; flex-direction: column">
+        <input id="username" placeholder="Username">
+        <input id="password" placeholder="Password">
+    </form>
+</div>
+
+
+@code {
+    [Parameter]
+    public Func<LoginPayload, bool, Task>? LoginCallback { get; set; }
+
+    public record LoginPayload(string Username, string Password);
+}

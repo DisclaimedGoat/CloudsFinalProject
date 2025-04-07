@@ -1,0 +1,46 @@
+﻿@using FinalProject.Components.Layout.States
+@inherits LayoutComponentBase
+
+<div class="main">
+    @switch (_state)
+    {
+        case States.LoggedOut:
+            <LoginPage LoginCallback="@LoginCallback"/>
+            break;
+        case States.LoggedIn:
+            <HomePage/>
+            break;
+        default:
+            throw new ArgumentOutOfRangeException();
+    }
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+
+@code {
+
+    private enum States
+    {
+        LoggedOut,
+        LoggedIn
+    }
+
+    private States _state = States.LoggedOut;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Validate user token here.
+        await Task.CompletedTask;
+    }
+
+    private async Task LoginCallback(LoginPage.LoginPayload payload, bool signup)
+    {
+        
+    }
+
+}
