@@ -1,0 +1,13 @@
+<div class="input-container have-shadow">
+    <span class="material-symbols-rounded icon">@Icon</span>
+    <input class="input-field" type="@Type" placeholder="@Placeholder" @bind="Value">
+</div>
+
+@code {
+    
+    [Parameter] public string Icon { get; set; } = string.Empty;
+    [Parameter] public string Type { get; set; } = "text";
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+
+    public string Value { get; set; } = string.Empty;
+}

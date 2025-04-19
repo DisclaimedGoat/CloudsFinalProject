@@ -9,6 +9,32 @@
 
     border: 2px solid #242424;
     border-radius: 1em;
+}
+
+.swap-btn {
+    margin: 1em;
+    width: 100%;
+    height: 3em;
+    border-color: #00000000;
     
-    box-shadow: 0 10px 10px #080808;
+    border-radius: 1em;
+    color: white;
+}
+
+.submit-btn {
+    margin: 1em;
+    width: 30%;
+    height: 3em;
+    border-color: #00000000;
+    background: #090909;
+    border-radius: 1em;
+    color: white;
+}
+
+.selected {
+    background: #090909;
+}
+
+.unselected {
+    background: #121212;
 }
