@@ -21,7 +21,11 @@ public class UserService(AppContext appContext)
 	
 	public async Task InitializeAsync()
 	{
-		User admin = new("admin@admin.com", "admin", "password");
+		User admin = new("admin@admin.com", "admin", "password")
+		{
+			Role = Roles.Admin
+		};
+		
 		await SignupAsync(admin);
 	}
 	
@@ -33,16 +37,22 @@ public class UserService(AppContext appContext)
 		if (!Verify(password, find.HashedPassword)) return null;
 		
 		find.LoggedIn = DateTime.Now;
+		find.Modified = DateTime.Now;
 		
 		appContext.Update(find);
 		await appContext.SaveChangesAsync();
 		return find;
+	}
 
+	public List<string> GetUsersAsync()
+	{
+		return appContext.Users.Select(u => u.Username).ToList();
 	}
 
 	public async Task<bool> SignupAsync(User user)
 	{
 		user.LoggedIn = DateTime.Now;
+		user.Modified = DateTime.Now;
 		
 		await appContext.AddAsync(user);
 		await appContext.SaveChangesAsync();

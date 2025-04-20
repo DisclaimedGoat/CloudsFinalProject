@@ -1,6 +1,6 @@
 <div class="input-container have-shadow">
     <span class="material-symbols-rounded icon">@Icon</span>
-    <input class="input-field" type="@Type" placeholder="@Placeholder" @bind="Value">
+    <input class="input-field" type="@Type" placeholder="@Placeholder" @bind="Value" @bind:event="oninput"/>
 </div>
 
 @code {

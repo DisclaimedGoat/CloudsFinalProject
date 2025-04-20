@@ -6,48 +6,44 @@
 @inject UserService UserService;
 
 <div class="main">
-    @switch (_state)
+    @if (_loggedInUser is null)
     {
-        case States.LoggedOut:
-            <LoginPage LoginCallback="@LoginCallback" SignUpCallback="@SignUpCallback"/>
-            break;
-        case States.LoggedIn:
-            <HomePage/>
-            break;
-        default:
-            throw new ArgumentOutOfRangeException();
+        <LoginPage LoginCallback="@LoginCallbackAsync" SignUpCallback="@SignUpCallbackAsync"/>
+    }
+    
+    @if (_loggedInUser is not null)
+    {
+        <HomePage User="_loggedInUser" LogOutCallback="LogOutAsync"/>
     }
 </div>
 
 @code {
-
-    private enum States
-    {
-        LoggedOut,
-        LoggedIn
-    }
-
-    private States _state = States.LoggedOut;
-
     private User? _loggedInUser;
 
-    private async Task LoginCallback(LoginPage.LoginPayload payload)
+    private async Task LoginCallbackAsync(LoginPage.LoginPayload payload)
     {
         User? loggedIn = await UserService.AuthAsync(payload.Username, payload.Password);
         if (loggedIn is null) return;
 
         _loggedInUser = loggedIn;
-        
-        Logger.LogInformation("Logged in.");
+        StateHasChanged();
     }
     
-    private async Task SignUpCallback(LoginPage.SignUpPayload payload)
+    private async Task SignUpCallbackAsync(LoginPage.SignUpPayload payload)
     {
         User user = new(payload.Email, payload.Username, payload.Password);
         bool success = await UserService.SignupAsync(user);
         if (!success) return;
-        
-        Logger.LogInformation("Signed up.");
-    } 
+
+        _loggedInUser = user;
+        StateHasChanged();
+    }
+
+    private async Task LogOutAsync()
+    {
+        _loggedInUser = null;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
 
 }

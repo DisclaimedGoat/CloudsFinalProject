@@ -1,7 +1,46 @@
 @page "/home"
+@using FinalProject.Models
+@using FinalProject.Services
 
-<h3>HomePage</h3>
+@inject UserService UserService
+
+<div class="main-body have-shadow">
+    <h1 style="text-align: left">User Info</h1>
+    
+    @if (User is not null)
+    {
+        <p><b>Email: </b> @User.Email</p>
+        <p><b>Username: </b> @User.Username</p>
+        <p><b>Date Created: </b> @User.Created</p>
+        <p><b>Date Modified: </b> @User.Modified</p>
+        <p><b>Last Logged In: </b> @User.LoggedIn</p>
+        <p><b>Role: </b> @User.Role</p>
+        
+        <p><b>Users: </b>@GetUserList()</p>
+    }
+
+    <button class="have-shadow logout-btn" style="align-self: center" onclick="@(async () => await LogoutAsync())">
+        Logout
+    </button>
+</div>
 
 @code {
-    
+    [Parameter] public Func<Task>? LogOutCallback { get; set; }
+
+    [Parameter] public User? User { get; set; }
+
+    private async Task LogoutAsync()
+    {
+        await (LogOutCallback?.Invoke() ?? Task.CompletedTask);
+    }
+
+    private string GetUserList()
+    {
+        if (User is null) return "ERROR";
+
+        if (User.Role != Roles.Admin) return "Unnecessary permissions";
+        
+        List<string> list = UserService.GetUsersAsync();
+        return string.Join(", ", list);
+    }
 }

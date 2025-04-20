@@ -1,6 +1,5 @@
 @page "/login"
 @using FinalProject.Components.Globals
-@using FinalProject.Models
 
 <div class="login have-shadow">
     <div style="display: flex">
@@ -18,22 +17,22 @@
     @switch (State)
     {
         case LoginState.Login:
-            <IconInput Icon="person" Placeholder="Username"/>
-            <IconInput Icon="key" Type="password" Placeholder="Password"/>
+            <IconInput @ref="liUsername" Icon="person" Placeholder="Username"/>
+            <IconInput @ref="liPassword" Icon="key" Type="password" Placeholder="Password"/>
             break;
             
         case LoginState.Signup:
-            <IconInput Icon="mail" Placeholder="Email" @bind="Email"/>
-            <IconInput Icon="person" Placeholder="Username" @bind="Username"/>
-            <IconInput Type="password" Icon="key" Placeholder="Password" @bind="Password"/>
-            <IconInput Type="password" Icon="lock" Placeholder="Confirm Password" @bind="ConfirmPassword"/>
+            <IconInput @ref="suEmail" Icon="mail" Placeholder="Email" />
+            <IconInput @ref="suUsername" Icon="person" Placeholder="Username"/>
+            <IconInput @ref="suPassword" Type="password" Icon="key" Placeholder="Password"/>
+            <IconInput @ref="suConfirmPassword" Type="password" Icon="lock" Placeholder="Confirm Password"/>
             break;
             
         default:
             throw new ArgumentOutOfRangeException();
     }
 
-    <button class="have-shadow submit-btn" style="align-self: center" onclick="@(() => SubmitPressed())">
+    <button class="have-shadow submit-btn" style="align-self: center" onclick="@(async () => await SubmitPressed())">
         Submit
     </button>
     
@@ -44,27 +43,23 @@
 
     private enum LoginState
     {
-        Login, Signup
+        Login,
+        Signup
     }
-    
-    [Parameter]
-    public Func<SignUpPayload, Task>? SignUpCallback { get; set; }
-    
-    [Parameter]
-    public Func<LoginPayload, Task>? LoginCallback { get; set; }
+
+    [Parameter] public Func<SignUpPayload, Task>? SignUpCallback { get; set; }
+
+    [Parameter] public Func<LoginPayload, Task>? LoginCallback { get; set; }
 
     private LoginState State { get; set; } = LoginState.Login;
 
+    IconInput liUsername, liPassword;
+    IconInput suEmail, suUsername, suPassword, suConfirmPassword;
+
     public record SignUpPayload(string Email, string Username, string Password);
-    
+
     public record LoginPayload(string Username, string Password);
 
-    private string Email { get; set; } = string.Empty;
-    private string Username { get; set; } = string.Empty;
-    private string Password { get; set; } = string.Empty;
-    private string ConfirmPassword { get; set; } = string.Empty;
-            
-    
     private void SetState(LoginState state)
     {
         State = state;
@@ -76,16 +71,16 @@
         switch (State)
         {
             case LoginState.Login:
-                LoginPayload login = new(Username, Password);
+                LoginPayload login = new(liUsername.Value, liPassword.Value);
                 await (LoginCallback?.Invoke(login) ?? Task.CompletedTask);
-                
+
                 break;
             case LoginState.Signup:
-                if (Password != ConfirmPassword) return;
+                if (suPassword.Value != suConfirmPassword.Value) return;
 
-                SignUpPayload signup = new(Email, Username, Password);
+                SignUpPayload signup = new(suEmail.Value, suUsername.Value, suPassword.Value);
                 await (SignUpCallback?.Invoke(signup) ?? Task.CompletedTask);
-                
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
